@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MarketVecino - Comunidad</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ===== BARRA DE NAVEGACIÓN ===== -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>🏘️ MarketVecino</h1>
+        </div>
+        <div class="nav-botones">
+            <button class="nav-btn active" onclick="mostrarSeccion('inicio')" id="btn-inicio">
+                🏠 Inicio
+            </button>
+            <button class="nav-btn" onclick="mostrarSeccion('marketplace')" id="btn-market">
+                🛒 Market
+            </button>
+            <button class="nav-btn" onclick="mostrarSeccion('noticias')" id="btn-noticias">
+                📰 Noticias
+            </button>
+            <button class="nav-btn" onclick="mostrarSeccion('chats')" id="btn-chats">
+                💬 Chats <span id="notificaciones-chat" class="notificacion">0</span>
+            </button>
+            <button class="nav-btn perfil-btn" onclick="mostrarSeccion('perfil')" id="btn-perfil">
+                <span id="foto-perfil-nav" class="foto-perfil-pequena"></span>
+                <span id="nombre-usuario-nav">Cuenta</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- ===== SECCIÓN INICIO ===== -->
+        <div id="inicio" class="seccion activa">
+            <h2 class="titulo-bienvenida" id="bienvenida-usuario">¡Bienvenido a tu comunidad!</h2>
+            
+            <!-- Tarjetas de acceso rápido -->
+            <div class="tarjetas-acceso">
+                <div class="tarjeta-acceso" onclick="mostrarSeccion('marketplace')">
+                    <div class="tarjeta-icono">🛍️</div>
+                    <h3>Marketplace</h3>
+                    <p>Compra y vende con vecinos</p>
+                    <span class="contador" id="contadorProductos">0 productos</span>
+                </div>
+                
+                <div class="tarjeta-acceso" onclick="mostrarSeccion('noticias')">
+                    <div class="tarjeta-icono">📰</div>
+                    <h3>Noticias</h3>
+                    <p>Entérate de lo que pasa</p>
+                    <span class="contador" id="contadorNoticias">0 noticias</span>
+                </div>
+            </div>
+
+            <!-- PUBLICACIONES RECIENTES EN INICIO -->
+            <div class="publicaciones-recientes">
+                <h3 class="titulo-seccion">📌 Publicaciones Recientes</h3>
+                
+                <!-- Productos recientes -->
+                <div class="recientes-categoria">
+                    <h4>🛒 Últimos productos</h4>
+                    <div id="inicio-productos" class="recientes-grid"></div>
+                </div>
+                
+                <!-- Noticias recientes -->
+                <div class="recientes-categoria">
+                    <h4>📰 Últimas noticias</h4>
+                    <div id="inicio-noticias" class="recientes-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SECCIÓN MARKETPLACE ===== -->
+        <div id="marketplace" class="seccion">
+            <!-- Encabezado -->
+            <div class="header-seccion">
+                <h2>🛒 Marketplace</h2>
+                <button class="btn-publicar" onclick="mostrarFormularioProducto()">
+                    + Publicar
+                </button>
+            </div>
+            
+            <!-- Formulario de Producto -->
+            <div id="formProducto" class="formulario" style="display: none;">
+                <h3>Publicar Producto</h3>
+                
+                <!-- Selector de imágenes -->
+                <div class="selector-imagenes">
+                    <label class="btn-selector-imagen">
+                        📸 Agregar Fotos
+                        <input type="file" id="inputImagenes" accept="image/*" multiple onchange="previsualizarImagenes(event)">
+                    </label>
+                    <div id="previsualizacion" class="previsualizacion-grid"></div>
+                </div>
+
+                <!-- Campos del formulario -->
+                <input type="text" id="titulo" placeholder="Título del producto *" class="campo">
+                <textarea id="descripcion" placeholder="Descripción detallada *" class="campo"></textarea>
+                <input type="number" id="precio" placeholder="Precio en $ *" class="campo">
+                
+                <select id="categoria" class="campo">
+                    <option value="">Selecciona categoría *</option>
+                    <option value="electronica">📱 Electrónica</option>
+                    <option value="hogar">🏠 Hogar</option>
+                    <option value="ropa">👕 Ropa</option>
+                    <option value="mascotas">🐾 Mascotas</option>
+                    <option value="deportes">⚽ Deportes</option>
+                    <option value="juguetes">🎮 Juguetes</option>
+                    <option value="libros">📚 Libros</option>
+                    <option value="otros">🔄 Otros</option>
+                </select>
+                
+                <input type="text" id="ubicacion" placeholder="Tu ubicación (ej: Centro, Norte...)" class="campo">
+                
+                <!-- Botones -->
+                <button onclick="guardarProducto()" class="btn-guardar">✅ Publicar Producto</button>
+                <button onclick="cerrarFormulario()" class="btn-cancelar">❌ Cancelar</button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filtros">
+                <select id="filtroCategoria" class="filtro-select" onchange="filtrarProductos()">
+                    <option value="todas">Todas las categorías</option>
+                    <option value="electronica">📱 Electrónica</option>
+                    <option value="hogar">🏠 Hogar</option>
+                    <option value="ropa">👕 Ropa</option>
+                    <option value="mascotas">🐾 Mascotas</option>
+                    <option value="deportes">⚽ Deportes</option>
+                </select>
+                
+                <select id="filtroEstado" class="filtro-select" onchange="filtrarProductos()">
+                    <option value="todos">Todos los estados</option>
+                    <option value="disponible">🟢 Disponible</option>
+                    <option value="vendido">🔴 Vendido</option>
+                </select>
+            </div>
+
+            <!-- Lista de productos -->
+            <div id="productos" class="productos-grid"></div>
+        </div>
+
+        <!-- ===== SECCIÓN NOTICIAS ===== -->
+        <div id="noticias" class="seccion">
+            <!-- Encabezado -->
+            <div class="header-seccion">
+                <h2>📰 Noticias</h2>
+                <button class="btn-publicar" onclick="mostrarFormularioNoticia()">
+                    + Publicar
+                </button>
+            </div>
+
+            <!-- Formulario Noticias -->
+            <div id="formNoticia" class="formulario" style="display: none;">
+                <h3>Publicar Noticia</h3>
+                
+                <!-- Selector de imagen -->
+                <div class="selector-imagenes">
+                    <label class="btn-selector-imagen">
+                        📸 Agregar Imagen
+                        <input type="file" id="inputImagenNoticia" accept="image/*" onchange="previsualizarImagenNoticia(event)">
+                    </label>
+                    <div id="previsualizacionNoticia" class="previsualizacion-simple"></div>
+                </div>
+
+                <!-- Campos del formulario -->
+                <input type="text" id="tituloNoticia" placeholder="Título de la noticia *" class="campo">
+                <textarea id="contenidoNoticia" placeholder="Escribe la noticia *" class="campo"></textarea>
+                
+                <select id="categoriaNoticia" class="campo">
+                    <option value="">Tipo de noticia *</option>
+                    <option value="evento">🎉 Evento</option>
+                    <option value="anuncio">📢 Anuncio</option>
+                    <option value="alerta">⚠️ Alerta</option>
+                    <option value="comunidad">👥 Comunidad</option>
+                </select>
+                
+                <!-- Botones -->
+                <button onclick="guardarNoticia()" class="btn-guardar">✅ Publicar Noticia</button>
+                <button onclick="cerrarFormNoticia()" class="btn-cancelar">❌ Cancelar</button>
+            </div>
+
+            <!-- Lista de noticias -->
+            <div id="noticiasLista" class="noticias-lista"></div>
+        </div>
+
+        <!-- ===== SECCIÓN CHATS ===== -->
+        <div id="chats" class="seccion">
+            <div class="header-seccion">
+                <h2>💬 Mis Conversaciones</h2>
+                <button class="btn-publicar" onclick="mostrarOpcionesChat()" style="background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);">
+                    ⚙️ Opciones
+                </button>
+            </div>
+
+            <!-- Lista de chats -->
+            <div id="lista-chats" class="chats-lista"></div>
+        </div>
+
+        <!-- ===== SECCIÓN PERFIL ===== -->
+        <div id="perfil" class="seccion">
+            <div class="perfil-container">
+                <!-- Si no hay sesión iniciada -->
+                <div id="login-form" class="formulario">
+                    <h3>🔐 Iniciar Sesión / Registrarse</h3>
+                    <input type="text" id="login-nombre" placeholder="Tu nombre" class="campo">
+                    <input type="password" id="login-password" placeholder="Contraseña" class="campo">
+                    <button onclick="iniciarSesion()" class="btn-guardar">✅ Iniciar Sesión</button>
+                    <p style="text-align: center; margin: 10px 0; color: #666;">o</p>
+                    <button onclick="registrarse()" class="btn-publicar" style="width: 100%;">📝 Crear Cuenta Nueva</button>
+                </div>
+
+                <!-- Perfil de usuario (visible solo con sesión) -->
+                <div id="perfil-info" class="formulario" style="display: none;">
+                    <div class="perfil-header">
+                        <div class="perfil-avatar" id="perfil-avatar" onclick="cambiarFotoPerfil()">
+                            <span id="avatar-texto">👤</span>
+                            <div class="editar-foto">📷</div>
+                        </div>
+                        <input type="file" id="inputFotoPerfil" accept="image/*" style="display: none;" onchange="guardarFotoPerfil(event)">
+                        <h3 id="perfil-nombre">Usuario</h3>
+                    </div>
+                    
+                    <div class="perfil-estadisticas">
+                        <div class="estadistica">
+                            <span class="estadistica-numero" id="perfil-productos">0</span>
+                            <span class="estadistica-label">Productos</span>
+                        </div>
+                        <div class="estadistica">
+                            <span class="estadistica-numero" id="perfil-noticias">0</span>
+                            <span class="estadistica-label">Noticias</span>
+                        </div>
+                        <div class="estadistica">
+                            <span class="estadistica-numero" id="perfil-chats">0</span>
+                            <span class="estadistica-label">Chats</span>
+                        </div>
+                    </div>
+
+                    <div class="perfil-acciones">
+                        <h4>Mis Publicaciones</h4>
+                        <button class="btn-publicar" onclick="mostrarMisProductos()" style="width: 100%; margin-bottom: 10px;">
+                            🛒 Ver mis productos
+                        </button>
+                        <button class="btn-publicar" onclick="mostrarMisNoticias()" style="width: 100%; margin-bottom: 10px;">
+                            📰 Ver mis noticias
+                        </button>
+                        <button class="btn-cancelar" onclick="cerrarSesion()" style="width: 100%;">
+                            🚪 Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL PARA VER DETALLES ===== -->
+    <div id="modal" class="modal" onclick="cerrarModal()">
+        <div class="modal-contenido" onclick="event.stopPropagation()">
+            <button class="btn-cerrar-modal" onclick="cerrarModal()">✕</button>
+            <div id="modal-contenido"></div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL DE CHAT ===== -->
+    <div id="chatModal" class="modal" onclick="cerrarChatModal()">
+        <div class="modal-contenido chat-modal" onclick="event.stopPropagation()">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="chat-foto" class="foto-perfil-chat"></span>
+                    <h3 id="chat-titulo">Chat</h3>
+                </div>
+                <div>
+                    <button class="btn-eliminar-chat" onclick="eliminarChatActual()" title="Eliminar conversación">🗑️</button>
+                    <button class="btn-cerrar-modal" onclick="cerrarChatModal()">✕</button>
+                </div>
+            </div>
+            <div id="chat-mensajes" class="chat-mensajes"></div>
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="chat-input">
+                <button onclick="enviarMensaje()" class="btn-enviar">📤 Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL DE OPCIONES DE CHAT ===== -->
+    <div id="opcionesChatModal" class="modal" onclick="cerrarOpcionesChatModal()">
+        <div class="modal-contenido" onclick="event.stopPropagation()">
+            <div class="chat-header">
+                <h3>⚙️ Opciones de Chat</h3>
+                <button class="btn-cerrar-modal" onclick="cerrarOpcionesChatModal()">✕</button>
+            </div>
+            <div class="opciones-chat">
+                <button class="btn-cancelar" onclick="eliminarTodosLosChats()" style="margin-bottom: 10px;">
+                    🗑️ Eliminar TODAS las conversaciones
+                </button>
+                <p style="color: #999; font-size: 0.9rem; text-align: center;">
+                    Esta acción no se puede deshacer
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
